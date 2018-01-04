@@ -7,8 +7,11 @@ from matplotlib.animation import FuncAnimation
 import datetime
 import csv
 from math import floor
+from scipy import ndimage
+from wcsaxes import WCSAxes
 
-def cum_chart():
+
+def cumulatve_chart():
 
     data = np.loadtxt("/Users/areustle/Downloads/cumulative.csv",
             comments='#', delimiter=',', usecols=(1,2,3,4))
@@ -63,6 +66,39 @@ def cum_chart():
     # pt.show()
     pt.clf()
 
+def query_time_series():
+
+    data = np.loadtxt("dataserver_queries.csv", comments='#', delimiter=',',
+            usecols=(1,2))
+
+    dates = []
+    with open('dataserver_queries.csv') as cvsfile:
+        for row in csv.reader(cvsfile):
+            if row[0][0] == "#":
+                continue
+            dates.append(datetime.datetime.strptime(row[0], "%Y-%m-%d"))
+
+    FERMI_5YEAR_IMAGE = os.path.join(os.environ['GSSC_REFDATA'], \
+                                 'Fermi_All_Sky_5year_GC.fits')
+
+    fig = pt.figure(figsize=(10, 5))
+    hdu = fits.open(fits_file)[0]
+
+    # Setup the axes
+    ax = WCSAxes(fig, [0.0, 0.0, 1.0, 1.0], wcs=WCS(hdu.header))
+    fig.add_axes(ax)
+    ax.set_xlim(-0.5, hdu.data.shape[1] - 0.5)
+    ax.set_ylim(-0.5, hdu.data.shape[0] - 0.5)
+
+    # Increase the default number of latitude grid lines.
+    ax.coords[0].set_ticks(number=6)
+
+    # Read in and scale the image.
+    ax.imshow(hdu.data, origin='lower', cmap=pt.cm.CMRmap)
+
+    # Add a coordinate grid.
+    ax.grid(True, color='white', linestyle='solid', alpha=0.5)
+
 if __name__ == '__main__':
 
-    cum_chart()
+    cumulatve_chart()
