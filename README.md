@@ -1,6 +1,11 @@
 
-#FSSC Wiki
-##Data Server Usage Plots
+# FSSC Wiki
+
+## Data Server Usage Plots
+
+Cumulative data animated:
+
+![](cumulative_download.gif)
 
 These are plots of the number of queries to the LAT data server on a daily and monthly basis. They are updated at the start of every day. For more information, see Usage Statistics.
 
